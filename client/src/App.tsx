@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -11,10 +11,12 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { SearchBar } from "@/components/search-bar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Dashboard } from "@/pages/dashboard";
+import { StockDetails } from "@/pages/stock-details";
 import NotFound from "@/pages/not-found";
 import type { Stock } from "@shared/schema";
 
 function AppContent() {
+  const [, setLocation] = useLocation();
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
   const [watchlistSymbols, setWatchlistSymbols] = useState<string[]>(() => {
     const stored = localStorage.getItem("watchlist");
@@ -32,7 +34,8 @@ function AppContent() {
 
   const handleSelectStock = useCallback((symbol: string) => {
     setSelectedSymbol(symbol);
-  }, []);
+    setLocation(`/stock/${symbol}`);
+  }, [setLocation]);
 
   const handleToggleWatchlist = useCallback((symbol: string) => {
     setWatchlistSymbols(prev => {
@@ -81,6 +84,9 @@ function AppContent() {
                   watchlist={watchlistSymbols}
                   onToggleWatchlist={handleToggleWatchlist}
                 />
+              </Route>
+              <Route path="/stock/:symbol">
+                <StockDetails />
               </Route>
               <Route path="/markets">
                 <Dashboard
