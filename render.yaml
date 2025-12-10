@@ -1,0 +1,24 @@
+# Render Blueprint for Stock Intelligence Dashboard Backend
+# Deploy this file to Render for automatic configuration
+
+services:
+  - type: web
+    name: stock-intelligence-api
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: HUGGINGFACE_API_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+    healthCheckPath: /api/health
+    autoDeploy: true
+    region: oregon
