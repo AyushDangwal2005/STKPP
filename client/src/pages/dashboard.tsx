@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LayoutGrid, List, RefreshCw, Star, StarOff } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { SearchBar } from "@/components/search-bar";
 import { StockCard } from "@/components/stock-card";
 import { StockTable } from "@/components/stock-table";
@@ -32,16 +33,21 @@ export function Dashboard({
 }: DashboardProps) {
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
 
-  const { data: stocks = [], isLoading: stocksLoading } = useQuery<Stock[]>({
+  const { data: stocks = [], isLoading: stocksLoading, dataUpdatedAt: stocksUpdatedAt } = useQuery<Stock[]>({
     queryKey: ["/api/stocks"],
+    refetchInterval: 30000,
+    staleTime: 15000,
   });
 
   const { data: indices = [], isLoading: indicesLoading } = useQuery<MarketIndex[]>({
     queryKey: ["/api/indices"],
+    refetchInterval: 30000,
+    staleTime: 15000,
   });
 
   const { data: news = [], isLoading: newsLoading } = useQuery<NewsArticle[]>({
     queryKey: ["/api/news"],
+    refetchInterval: 60000,
   });
 
   const { data: chartData = [], isLoading: chartLoading } = useQuery<ChartDataPoint[]>({
@@ -84,7 +90,17 @@ export function Dashboard({
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 space-y-6 min-w-0">
             <div className="flex items-center justify-between gap-4 flex-wrap">
-              <h2 className="text-xl font-semibold">Stocks</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl font-semibold">Stocks</h2>
+                <Badge variant="outline" className="text-xs">
+                  Live Data
+                </Badge>
+                {stocksUpdatedAt && (
+                  <span className="text-xs text-muted-foreground">
+                    Updated: {new Date(stocksUpdatedAt).toLocaleTimeString()}
+                  </span>
+                )}
+              </div>
               <div className="flex items-center gap-2">
                 <SearchBar
                   stocks={stocks}
