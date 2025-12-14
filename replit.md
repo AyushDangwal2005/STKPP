@@ -64,9 +64,20 @@ shared/           # Shared types and schemas
 - **connect-pg-simple**: Session storage (when authentication is enabled)
 
 ### Required Environment Variables
-- `DATABASE_URL`: PostgreSQL connection string
-- `GEMINI_API_KEY`: Google Gemini API key for AI predictions
+- `GEMINI_API_KEY`: Google Gemini API key for AI predictions (required)
+- `DATABASE_URL`: PostgreSQL connection string (optional, for user features)
 - `HUGGINGFACE_API_KEY`: Hugging Face API key for sentiment analysis (optional, has fallback)
+
+### Deployment
+The project is configured for Replit autoscale deployment:
+- Build command: `npm run build`
+- Run command: `node dist/index.cjs`
+
+### Real-Time Data Features
+- Stock quotes and market indices: Yahoo Finance API via yahoo-finance2
+- Auto-refresh: Stocks every 30 seconds, news every 60 seconds
+- AI predictions: Gemini API for stock price forecasting
+- Note: Market indices show 0 when US stock markets are closed (weekends/holidays)
 
 ### Key Frontend Libraries
 - Radix UI primitives for accessible components
